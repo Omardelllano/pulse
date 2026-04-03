@@ -1,0 +1,43 @@
+// Hardcoded WorldState fixture for DATA_SOURCE=mock mode.
+// Zero API calls — all P0 rendering uses this data.
+// spread_matrix is populated at runtime by node-generator from CONTAGION_MATRIX.
+const FIXTURE_WORLD_STATE = {
+  timestamp: "2024-01-15T12:00:00",
+  event_text: "",
+  event_source: "base",
+  states: [
+    { state_code: "CDMX", state_name: "Ciudad de México",    emotion: "fear",    intensity: 0.70, description: "La capital concentra la mayor incertidumbre del país.",        wave_order: 0, latitude: 19.4326, longitude:  -99.1332, population_weight: 1.00 },
+    { state_code: "MEX",  state_name: "Estado de México",    emotion: "fear",    intensity: 0.65, description: "El Estado de México refleja la tensión de la capital.",         wave_order: 1, latitude: 19.4969, longitude:  -99.6953, population_weight: 0.90 },
+    { state_code: "JAL",  state_name: "Jalisco",             emotion: "hope",    intensity: 0.55, description: "Jalisco mantiene esperanza pese al clima nacional.",            wave_order: 2, latitude: 20.6595, longitude: -103.3494, population_weight: 0.55 },
+    { state_code: "NL",   state_name: "Nuevo León",          emotion: "hope",    intensity: 0.60, description: "El sector industrial ve oportunidades en la incertidumbre.",   wave_order: 2, latitude: 25.5922, longitude:  -99.9962, population_weight: 0.40 },
+    { state_code: "PUE",  state_name: "Puebla",              emotion: "fear",    intensity: 0.55, description: "Puebla enfrenta incertidumbre ante los cambios.",              wave_order: 2, latitude: 19.0414, longitude:  -98.2063, population_weight: 0.40 },
+    { state_code: "VER",  state_name: "Veracruz",            emotion: "sadness", intensity: 0.50, description: "Veracruz lamenta las consecuencias para su economía.",         wave_order: 3, latitude: 19.1738, longitude:  -96.1342, population_weight: 0.40 },
+    { state_code: "GTO",  state_name: "Guanajuato",          emotion: "anger",   intensity: 0.65, description: "Guanajuato reacciona con indignación ante la violencia.",      wave_order: 2, latitude: 21.0190, longitude: -101.2574, population_weight: 0.40 },
+    { state_code: "CHIH", state_name: "Chihuahua",           emotion: "fear",    intensity: 0.60, description: "Chihuahua, en la frontera, teme el impacto inmediato.",        wave_order: 1, latitude: 28.6330, longitude: -106.0691, population_weight: 0.25 },
+    { state_code: "BC",   state_name: "Baja California",     emotion: "fear",    intensity: 0.65, description: "Baja California siente la presión fronteriza directamente.",  wave_order: 1, latitude: 30.8406, longitude: -115.2838, population_weight: 0.25 },
+    { state_code: "TAM",  state_name: "Tamaulipas",          emotion: "fear",    intensity: 0.70, description: "Tamaulipas, estado fronterizo, siente el impacto directo.",   wave_order: 1, latitude: 24.2669, longitude:  -98.8363, population_weight: 0.25 },
+    { state_code: "SIN",  state_name: "Sinaloa",             emotion: "fear",    intensity: 0.60, description: "Sinaloa teme disrupciones en su sector agrícola.",             wave_order: 2, latitude: 25.1721, longitude: -107.4795, population_weight: 0.20 },
+    { state_code: "SON",  state_name: "Sonora",              emotion: "fear",    intensity: 0.55, description: "Sonora anticipa consecuencias graves en la frontera norte.",   wave_order: 1, latitude: 29.2972, longitude: -110.3309, population_weight: 0.20 },
+    { state_code: "COAH", state_name: "Coahuila",            emotion: "fear",    intensity: 0.50, description: "Coahuila, estado industrial, teme el impacto económico.",     wave_order: 2, latitude: 27.0587, longitude: -101.7068, population_weight: 0.22 },
+    { state_code: "CHIS", state_name: "Chiapas",             emotion: "sadness", intensity: 0.60, description: "Chiapas, ya vulnerable, siente más peso sobre sus comunidades.", wave_order: 4, latitude: 16.7569, longitude: -93.1292, population_weight: 0.30 },
+    { state_code: "GRO",  state_name: "Guerrero",            emotion: "anger",   intensity: 0.70, description: "Guerrero reacciona con ira ante una situación que lo perjudica.", wave_order: 3, latitude: 17.4392, longitude: -99.5451, population_weight: 0.25 },
+    { state_code: "OAX",  state_name: "Oaxaca",              emotion: "sadness", intensity: 0.55, description: "Oaxaca siente tristeza ante la agudización de sus carencias.", wave_order: 4, latitude: 17.0732, longitude: -96.7266, population_weight: 0.28 },
+    { state_code: "MICH", state_name: "Michoacán",           emotion: "anger",   intensity: 0.65, description: "Michoacán reacciona con enojo ante la falta de soluciones.",  wave_order: 3, latitude: 19.5665, longitude: -101.7068, population_weight: 0.30 },
+    { state_code: "TAB",  state_name: "Tabasco",             emotion: "sadness", intensity: 0.45, description: "Tabasco siente el peso de la situación con resignación.",      wave_order: 4, latitude: 17.8409, longitude:  -92.6189, population_weight: 0.15 },
+    { state_code: "HGO",  state_name: "Hidalgo",             emotion: "fear",    intensity: 0.45, description: "Hidalgo teme las consecuencias para sus trabajadores.",        wave_order: 3, latitude: 20.0911, longitude:  -98.7624, population_weight: 0.20 },
+    { state_code: "QRO",  state_name: "Querétaro",           emotion: "hope",    intensity: 0.55, description: "Querétaro, polo industrial, ve oportunidades de crecimiento.", wave_order: 2, latitude: 20.5888, longitude: -100.3899, population_weight: 0.18 },
+    { state_code: "SLP",  state_name: "San Luis Potosí",     emotion: "sadness", intensity: 0.45, description: "San Luis Potosí lamenta el impacto en sus exportaciones.",    wave_order: 3, latitude: 22.1565, longitude: -100.9855, population_weight: 0.20 },
+    { state_code: "ZAC",  state_name: "Zacatecas",           emotion: "sadness", intensity: 0.45, description: "Zacatecas siente el golpe con melancolía.",                    wave_order: 4, latitude: 22.7709, longitude: -102.5832, population_weight: 0.12 },
+    { state_code: "AGS",  state_name: "Aguascalientes",      emotion: "hope",    intensity: 0.45, description: "Aguascalientes mantiene esperanza pese a la situación.",      wave_order: 3, latitude: 22.0000, longitude: -102.2960, population_weight: 0.10 },
+    { state_code: "NAY",  state_name: "Nayarit",             emotion: "fear",    intensity: 0.40, description: "Nayarit teme efectos negativos en su turismo y agricultura.", wave_order: 4, latitude: 21.7514, longitude: -104.8455, population_weight: 0.08 },
+    { state_code: "COL",  state_name: "Colima",              emotion: "fear",    intensity: 0.55, description: "Colima, pequeño pero vulnerable, siente la presión.",         wave_order: 4, latitude: 19.1223, longitude: -103.7249, population_weight: 0.06 },
+    { state_code: "DUR",  state_name: "Durango",             emotion: "sadness", intensity: 0.40, description: "Durango observa la situación con preocupación tranquila.",    wave_order: 4, latitude: 24.0277, longitude: -104.6532, population_weight: 0.12 },
+    { state_code: "BCS",  state_name: "Baja California Sur", emotion: "hope",    intensity: 0.35, description: "BCS confía en que el turismo lo mantenga a flote.",           wave_order: 5, latitude: 25.1694, longitude: -111.7234, population_weight: 0.08 },
+    { state_code: "MOR",  state_name: "Morelos",             emotion: "fear",    intensity: 0.55, description: "Morelos teme la propagación de tensiones desde la capital.",  wave_order: 2, latitude: 18.6813, longitude:  -99.1013, population_weight: 0.15 },
+    { state_code: "CAM",  state_name: "Campeche",            emotion: "sadness", intensity: 0.40, description: "Campeche siente el golpe en su industria petrolera.",         wave_order: 4, latitude: 19.8301, longitude:  -90.5349, population_weight: 0.08 },
+    { state_code: "YUC",  state_name: "Yucatán",             emotion: "hope",    intensity: 0.45, description: "Yucatán apuesta por su diversificación económica.",           wave_order: 5, latitude: 20.7099, longitude:  -89.0943, population_weight: 0.15 },
+    { state_code: "QROO", state_name: "Quintana Roo",        emotion: "hope",    intensity: 0.50, description: "Quintana Roo confía en su sector turístico.",                 wave_order: 5, latitude: 19.1817, longitude:  -88.4791, population_weight: 0.12 },
+    { state_code: "TLAX", state_name: "Tlaxcala",            emotion: "sadness", intensity: 0.45, description: "Tlaxcala siente la situación como una carga más.",            wave_order: 4, latitude: 19.3182, longitude:  -98.1979, population_weight: 0.10 },
+  ],
+  spread_matrix: {},  // Populated at runtime by node-generator from CONTAGION_MATRIX
+};

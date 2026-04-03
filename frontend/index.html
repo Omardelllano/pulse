@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PULSO — El mapa emocional de México</title>
+
+  <!-- Favicon: glowing dot SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='10' fill='%23a070ff' opacity='0.9'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23d4aaff'/%3E%3C/svg%3E">
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="PULSO — El mapa emocional de México">
+  <meta property="og:description" content="Visualiza en tiempo real cómo los eventos nacionales impactan el estado emocional de cada estado de México.">
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="/">
+  <meta property="og:image"       content="/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="PULSO — El mapa emocional de México">
+  <meta name="twitter:description" content="Visualiza en tiempo real cómo los eventos nacionales impactan el estado emocional de México.">
+  <meta name="twitter:image"       content="/og-image.png">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#050510">
+
+  <link rel="stylesheet" href="css/pulso.css">
+</head>
+<body>
+
+  <!-- Full-viewport canvas -->
+  <div id="canvas-container">
+    <canvas id="main-canvas"></canvas>
+  </div>
+
+  <!-- Controls overlay -->
+  <div id="controls">
+    <div id="header">
+      <div id="title">PULSO</div>
+      <div id="subtitle">El mapa emocional de México</div>
+    </div>
+    <div id="filter-panel"></div>
+    <div id="stats">
+      <span id="node-count">—</span> nodos &nbsp;·&nbsp; <span id="fps-display">—</span> fps
+    </div>
+    <button id="replay-btn">Replay wave</button>
+    <button id="share-btn">Compartir</button>
+  </div>
+
+  <!-- Hover tooltip -->
+  <div id="tooltip"></div>
+
+  <!-- News sidebar toggle (top-right corner) -->
+  <button id="news-toggle" title="Ver noticias" aria-label="Ver noticias">☰</button>
+
+  <!-- News sidebar -->
+  <aside id="news-sidebar">
+    <div id="news-sidebar-header">Noticias recientes</div>
+    <div id="news-list"></div>
+  </aside>
+
+  <!-- Event simulation input (P1-ready) -->
+  <div id="event-panel">
+    <form id="event-form" autocomplete="off">
+      <input type="text" id="event-input"
+             placeholder="Simula un evento en México…"
+             maxlength="200">
+      <button type="submit" id="event-submit">Simular</button>
+    </form>
+    <!-- Suggestion pills -->
+    <div id="suggestions">
+      <button class="suggestion-pill" data-text="Sismo en CDMX">Sismo en CDMX</button>
+      <button class="suggestion-pill" data-text="México gana el Mundial">México gana el Mundial</button>
+      <button class="suggestion-pill" data-text="Huracán en costas de Yucatán">Huracán en Yucatán</button>
+      <button class="suggestion-pill" data-text="Crisis económica en México">Crisis económica</button>
+      <button class="suggestion-pill" data-text="Elecciones presidenciales en México">Elecciones</button>
+      <button class="suggestion-pill" data-text="Inundaciones en Tabasco">Inundaciones</button>
+    </div>
+  </div>
+
+  <!-- ── Scripts: data layer → engine → renderer → UI → bootstrap ── -->
+
+  <!-- Config (must load first) -->
+  <script src="js/config.js"></script>
+
+  <!-- Static data -->
+  <script src="js/data/mexico.js"></script>
+  <script src="js/data/contagion.js"></script>
+  <script src="js/data/fixtures.js"></script>
+  <script src="js/data/mexico-outline.js"></script>
+
+  <!-- Engine -->
+  <script src="js/engine/node-generator.js"></script>
+  <script src="js/engine/edge-generator.js"></script>
+  <script src="js/engine/wave-animator.js"></script>
+  <script src="js/engine/particle-system.js"></script>
+
+  <!-- Renderer -->
+  <script src="js/renderer/glow-effects.js"></script>
+  <script src="js/renderer/zoom-controller.js"></script>
+  <script src="js/renderer/canvas-renderer.js"></script>
+
+  <!-- UI -->
+  <script src="js/ui/emotion-filter.js"></script>
+  <script src="js/ui/tooltip.js"></script>
+  <script src="js/ui/event-input.js"></script>
+  <script src="js/ui/news-feed.js"></script>
+
+  <!-- API client -->
+  <script src="js/api/client.js"></script>
+
+  <!-- Bootstrap -->
+  <script>
+    (function () {
+      'use strict';
+
+      const canvas   = document.getElementById('main-canvas');
+      const renderer = new CanvasRenderer(canvas);
+      const nodeGen  = new NodeGenerator();
+      const edgeGen  = new EdgeGenerator();
+
+      // ── Load from mock fixtures (DATA_SOURCE=mock) ──────────────
+      function loadMock() {
+        const ws    = FIXTURE_WORLD_STATE;
+        const nodes = nodeGen.generate(ws, MEXICO_STATES, CONTAGION_MATRIX);
+        const edges = edgeGen.generate(nodes);
+        renderer.load(nodes, edges);
+        setTimeout(() => renderer.startWave(), 500);
+
+        document.getElementById('node-count').textContent = nodes.length.toLocaleString('es-MX');
+
+        // Warn in console if below target
+        if (nodes.length < 1200) {
+          console.warn('[PULSO] Node count below 1200: ' + nodes.length);
+        } else {
+          console.log('[PULSO] Loaded ' + nodes.length + ' nodes, ' + edges.length + ' edges');
+        }
+      }
+
+      // ── Load from API ────────────────────────────────────────────
+      function loadApi() {
+        const client = new ApiClient(CONFIG.API_URL);
+        client.getState()
+          .then(ws => {
+            const nodes = nodeGen.generate(ws, MEXICO_STATES, CONTAGION_MATRIX);
+            const edges = edgeGen.generate(nodes);
+            renderer.load(nodes, edges);
+            setTimeout(() => renderer.startWave(), 500);
+            document.getElementById('node-count').textContent = nodes.length.toLocaleString('es-MX');
+            console.log('[PULSO] API loaded ' + nodes.length + ' nodes');
+          })
+          .catch(err => {
+            console.warn('[PULSO] API error, falling back to mock:', err.message);
+            loadMock();
+          });
+      }
+
+      // ── Wire up UI ───────────────────────────────────────────────
+      function initUI() {
+        // Emotion filters
+        new EmotionFilter(document.getElementById('filter-panel'), renderer);
+
+        // Tooltip
+        new Tooltip(document.getElementById('tooltip'), canvas, renderer);
+
+        // Event input — POST to /api/simulate, load WorldState, trigger wave
+        const apiClient = new ApiClient(CONFIG.API_URL);
+        new EventInput(document.getElementById('event-form'), async text => {
+          const submitBtn = document.getElementById('event-submit');
+          submitBtn.disabled = true;
+          submitBtn.textContent = '…';
+          try {
+            const result = await apiClient.simulate(text);
+            const ws = result.world_state;
+
+            // Debug: show what came back
+            console.log('[PULSO] Simulate response:', {
+              cached: result.cached,
+              method: ws.metadata?.method,
+              keyword_hits: ws.metadata?.keyword_hits,
+              processing_ms: result.processing_time_ms,
+              top3: ws.states
+                ?.sort((a, b) => b.intensity - a.intensity)
+                .slice(0, 3)
+                .map(s => `${s.state_code}=${s.emotion}(${s.intensity.toFixed(2)})`),
+            });
+
+            // Rebuild nodes from new WorldState
+            const nodes = nodeGen.generate(ws, MEXICO_STATES, CONTAGION_MATRIX);
+            const edges = edgeGen.generate(nodes);
+            renderer.load(nodes, edges);
+            document.getElementById('node-count').textContent = nodes.length.toLocaleString('es-MX');
+
+            // Trigger wave animation
+            setTimeout(() => renderer.startWave(), 100);
+
+            console.log('[PULSO] Map updated:', nodes.length, 'nodes, wave started');
+          } catch (err) {
+            console.warn('[PULSO] Simulation error:', err.message);
+            // Show brief error in submit button
+            submitBtn.textContent = 'Error';
+            setTimeout(() => { submitBtn.textContent = 'Simular'; }, 2000);
+          } finally {
+            submitBtn.disabled = false;
+            if (submitBtn.textContent === '…') submitBtn.textContent = 'Simular';
+          }
+        });
+
+        // Replay wave button
+        document.getElementById('replay-btn').addEventListener('click', () => renderer.replayWave());
+
+        // Share button — capture canvas + "PULSO" watermark
+        document.getElementById('share-btn').addEventListener('click', () => captureAndShare(canvas));
+
+        // Suggestion pills — fill input and submit on click
+        document.getElementById('suggestions').addEventListener('click', e => {
+          const pill = e.target.closest('.suggestion-pill');
+          if (!pill) return;
+          const input = document.getElementById('event-input');
+          input.value = pill.dataset.text;
+          document.getElementById('event-form').requestSubmit();
+        });
+
+        // FPS display
+        setInterval(() => {
+          document.getElementById('fps-display').textContent = renderer.fps || '—';
+        }, 1000);
+
+        // News sidebar — always active (mock headlines served from /api/news when RSS fails)
+        const newsClient = new ApiClient(CONFIG.API_URL);
+        const newsFeed = new NewsFeed(document.getElementById('news-list'));
+        newsFeed.startPolling(newsClient, 3 * 60 * 1000); // every 3 min
+
+        // Toggle button
+        initNewsSidebarToggle(document.getElementById('news-toggle'));
+
+        // Poll /api/state every 60 seconds (API mode only — mock never changes)
+        if (CONFIG.DATA_SOURCE === 'api') {
+          setInterval(() => {
+            newsClient.getState()
+              .then(ws => {
+                const nodes = nodeGen.generate(ws, MEXICO_STATES, CONTAGION_MATRIX);
+                const edges = edgeGen.generate(nodes);
+                renderer.load(nodes, edges);
+                document.getElementById('node-count').textContent = nodes.length.toLocaleString('es-MX');
+              })
+              .catch(() => {/* keep current state on error */});
+          }, 60 * 1000);
+        }
+      }
+
+      // ── Bootstrap ────────────────────────────────────────────────
+      function init() {
+        if (CONFIG.DATA_SOURCE === 'mock') {
+          loadMock();
+        } else {
+          loadApi();
+        }
+        initUI();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    }());
+
+    /* ── Share / Screenshot ──────────────────────────────────────────── */
+    function captureAndShare(sourceCanvas) {
+      const btn = document.getElementById('share-btn');
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      // Copy the main canvas to a temp canvas + add watermark
+      const tmp  = document.createElement('canvas');
+      tmp.width  = sourceCanvas.width;
+      tmp.height = sourceCanvas.height;
+      const ctx  = tmp.getContext('2d');
+
+      ctx.drawImage(sourceCanvas, 0, 0);
+
+      // Watermark: "PULSO" bottom-right
+      const dpr  = window.devicePixelRatio || 1;
+      const size = Math.round(18 * dpr);
+      ctx.save();
+      ctx.font         = `bold ${size}px monospace`;
+      ctx.textAlign    = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.globalAlpha  = 0.55;
+      ctx.fillStyle    = '#ffffff';
+      ctx.shadowColor  = '#a070ff';
+      ctx.shadowBlur   = 12 * dpr;
+      ctx.fillText('PULSO', tmp.width - 20 * dpr, tmp.height - 16 * dpr);
+      ctx.restore();
+
+      // Event text overlay (if input has content)
+      const eventText = (document.getElementById('event-input').value || '').trim();
+      if (eventText) {
+        const labelSize = Math.round(13 * dpr);
+        ctx.save();
+        ctx.font         = `${labelSize}px monospace`;
+        ctx.textAlign    = 'left';
+        ctx.textBaseline = 'bottom';
+        ctx.globalAlpha  = 0.70;
+        ctx.fillStyle    = '#e0e0e0';
+        ctx.fillText(eventText.slice(0, 80), 20 * dpr, tmp.height - 16 * dpr);
+        ctx.restore();
+      }
+
+      tmp.toBlob(blob => {
+        const file = new File([blob], 'pulso.png', { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            title: 'PULSO — El mapa emocional de México',
+            text:  eventText || 'El estado emocional de México en tiempo real',
+            files: [file],
+          }).catch(() => {}).finally(() => { btn.disabled = false; btn.textContent = 'Compartir'; });
+        } else {
+          // Fallback: trigger PNG download
+          const url = URL.createObjectURL(blob);
+          const a   = document.createElement('a');
+          a.href    = url;
+          a.download = 'pulso.png';
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          btn.disabled = false;
+          btn.textContent = 'Compartir';
+        }
+      }, 'image/png');
+    }
+  </script>
+
+</body>
+</html>

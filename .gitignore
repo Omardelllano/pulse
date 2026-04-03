@@ -1,0 +1,11 @@
+.env
+output/
+*.db
+__pycache__/
+.pytest_cache/
+*.pyc
+.claude/
+node_modules/
+dist/
+.DS_Store
+*.egg-info/

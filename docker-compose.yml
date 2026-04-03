@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  pulso:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PULSO_PROVIDER=mock
+      - PULSO_DATA_SOURCE=mock
+      - PULSO_HOST=0.0.0.0
+      - PULSO_PORT=8000
+      - PULSO_LOG_LEVEL=info
+    volumes:
+      - ./output:/app/output
+    command: python -m pulso serve
+
+volumes: {}
