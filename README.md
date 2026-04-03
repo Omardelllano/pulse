@@ -283,7 +283,6 @@ pulse/
 
 ## Built With
 
-This project was built using a phase-gated development methodology with AI-assisted coding (Claude Code). The full technical specification is documented in [PULSO_MASTER_BRIEFING_v2.md](PULSO_MASTER_BRIEFING_v2.md).
 
 Previous project using the same methodology: [Agile Wargame Simulator](https://github.com/omardelllano/agile-wargame-simulator)
 
