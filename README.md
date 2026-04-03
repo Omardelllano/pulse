@@ -13,10 +13,10 @@
 
 Type any event — *"the dollar rises to 25 pesos"*, *"earthquake in Mexico City"*, *"Mexico wins the World Cup"* — and watch the emotional shockwave propagate across the country.
 
-![PULSO Screenshot](docs/screenshot.png) 
+![PULSO Screenshot](doc/screenshot.png)
 
 ---
-
+S
 ## What is PULSO?
 
 PULSO is a real-time emotional visualization engine for Mexico. It combines:
