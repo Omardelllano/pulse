@@ -13,7 +13,7 @@
 
 Type any event — *"the dollar rises to 25 pesos"*, *"earthquake in Mexico City"*, *"Mexico wins the World Cup"* — and watch the emotional shockwave propagate across the country.
 
-![PULSO Screenshot](doc/screenshot.png)
+
 
 ---
 S
