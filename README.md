@@ -16,7 +16,7 @@ Type any event — *"the dollar rises to 25 pesos"*, *"earthquake in Mexico City
 
 
 ---
-S
+![PULSO Screenshot](doc/screenshot.png)
 ## What is PULSO?
 
 PULSO is a real-time emotional visualization engine for Mexico. It combines:
